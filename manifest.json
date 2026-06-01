@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Render Keep Alive",
   "version": "1.0",
-  "description": "Keep Render backend awake",
+  "description": "Keep Render backend awake with automatic periodic pings",
   "permissions": [
     "storage",
     "alarms"
@@ -14,6 +14,13 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "Render Keep Alive",
+    "default_icon": "icon.svg"
+  },
+  "icons": {
+    "16": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
   }
 }
