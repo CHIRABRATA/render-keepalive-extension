@@ -32,8 +32,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 async function pingRender() {
   const data = await chrome.storage.local.get(["renderUrl", "lastPing"]);
 
-  if (!data.renderUrl) {
-    console.log("No Render URL configured");
+  // Validate URL to prevent fetch errors if the user forgot http:// or https://
+  if (!data.renderUrl || !data.renderUrl.startsWith('http')) {
+    console.log("No valid Render URL configured");
     return;
   }
 
@@ -42,7 +43,10 @@ async function pingRender() {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
 
+    // Using HEAD to save bandwidth and cache: "no-store" to guarantee a real network request
     const response = await fetch(data.renderUrl, {
+      method: "HEAD",
+      cache: "no-store",
       signal: controller.signal
     });
 
@@ -86,7 +90,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.alarms.create("keepAlive", {
         periodInMinutes: request.interval
       });
+      // Send response after the alarm is successfully recreated
+      sendResponse({ success: true });
     });
-    sendResponse({ success: true });
+    
+    // Explicitly return true to keep the message channel open for the async callback
+    return true;
   }
 });
