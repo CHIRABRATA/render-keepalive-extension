@@ -43,9 +43,8 @@ async function pingRender() {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
 
-    // Using HEAD to save bandwidth and cache: "no-store" to guarantee a real network request
+    // Standard GET request (fixes the 405 error) with cache: "no-store" to guarantee a real network ping
     const response = await fetch(data.renderUrl, {
-      method: "HEAD",
       cache: "no-store",
       signal: controller.signal
     });
