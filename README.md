@@ -78,6 +78,23 @@ And that's all there is to it! Your extension is now actively working in the bac
 
 ### 📂 Project Architecture
 
+Here's a high-level overview of how the Render Keep Alive extension works:
+
+```mermaid
+graph TD
+    A[User] -- 1. Opens Extension Popup --> B(popup.html & popup.js)
+    B -- 2. Sets URL & Interval --> C{chrome.storage.local}
+    C -- 3. Saves Settings --> B
+    B -- 4. Sends "updateInterval" Message --> D(background.js Service Worker)
+    D -- 5. Clears & Creates Alarm --> E[chrome.alarms API]
+    E -- 6. Alarm Triggered Periodically --> D
+    D -- 7. Fetches Render URL --> F(Render Backend Service)
+    F -- 8. Response (Success/Fail) --> D
+    D -- 9. Stores Last Ping Status --> C
+    C -- 10. Last Ping Status Retrieved --> B
+    B -- 11. Displays Last Ping Status --> A
+```
+
 -   `manifest.json`: The core manifest file, defining the extension's identity, required permissions, and crucial background scripts.
 -   `background.js`: The brain of the operation! This service worker script meticulously manages alarms, orchestrates periodic pings, and facilitates smooth communication with the popup interface.
 -   `popup.html`: The visual blueprint for the extension's popup, presenting all user controls and status displays.
